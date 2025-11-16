@@ -4,6 +4,7 @@ import Layout from "../../components/Layout";
 import Sidebar from "../../components/Sidebar";
 import EntityList from "../../components/EntityList";
 import EntityModal from "../../components/EntityModal";
+import AIWizard from "../../components/AIWizard";
 import axios from "axios";
 
 export default function WorldPage() {
@@ -16,12 +17,44 @@ export default function WorldPage() {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [viewing, setViewing] = useState(null);
+  const [allEntities, setAllEntities] = useState({
+    characters: [],
+    locations: [],
+    magics: [],
+    factions: [],
+    events: [],
+  });
 
   useEffect(() => {
     if (!id) return;
     axios.get(`/api/worlds/${id}`).then((r) => setWorld(r.data));
     loadItems();
+    loadAllEntities();
   }, [id, tab]);
+
+  function loadAllEntities() {
+    if (!id) return;
+    const entityTypes = [
+      "characters",
+      "locations",
+      "magics",
+      "factions",
+      "events",
+    ];
+    Promise.all(
+      entityTypes.map((type) =>
+        axios
+          .get(`/api/${type}?worldId=${id}`)
+          .then((r) => ({ type, data: r.data }))
+      )
+    ).then((results) => {
+      const entities = {};
+      results.forEach(({ type, data }) => {
+        entities[type] = data;
+      });
+      setAllEntities(entities);
+    });
+  }
 
   function loadItems() {
     if (!id) return;
@@ -113,6 +146,15 @@ export default function WorldPage() {
             setViewModalOpen(false);
             handleEdit(viewing);
           }}
+        />
+      )}
+
+      {world && (
+        <AIWizard
+          world={world}
+          activeTab={tab}
+          entities={items}
+          allEntities={allEntities}
         />
       )}
     </Layout>

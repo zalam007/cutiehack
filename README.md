@@ -1,42 +1,53 @@
 # LoreForge — AI-powered worldbuilding
 
-An AI-powered worldbuilding and lore-management tool for creating and managing fictional universes.
+An AI-powered worldbuilding and lore-management tool for creating and managing fictional universes, featuring Google Gemini integration for intelligent worldbuilding assistance.
 
 ## Features
 
 ✅ **Multi-world management** — Create and organize multiple fictional universes  
 ✅ **Rich entity types** — Characters, Locations, Magic Systems, Factions, Story Events  
-✅ **Visual relationship maps** — Character relationships and location connections  
-✅ **AI-powered suggestions** — Expand characters, generate backstories, fill plot holes (stub — configure your provider)  
+✅ **Custom fields per entity** — Specialized fields for each type (age/strengths for characters, climate/population for locations, etc.)  
+✅ **AI Wizard** — Google Gemini-powered assistant with context-aware suggestions  
+✅ **Quick AI Actions** — Generate characters, locations, magic systems, factions, and story events with one click  
+✅ **Chat Interface** — Ask the AI wizard custom questions about your world  
 ✅ **CRUD operations** — Full create, read, update, delete for all entities  
-✅ **Clean, modern UI** — Dark theme with intuitive navigation
+✅ **Fantasy-themed UI** — Mystical dark theme with purple/gold gradients and Cinzel typography
 
 ## Tech Stack
 
-- **Frontend:** Next.js (React)
-- **Backend:** Next.js API routes (Node)
-- **Database:** Prisma + SQLite (switchable to PostgreSQL)
-- **Visualizations:** vis-network
+- **Frontend:** Next.js 13 (React)
+- **Backend:** Next.js API routes (Node.js)
+- **Database:** Prisma ORM + SQLite (switchable to PostgreSQL)
+- **AI:** Google Generative AI (Gemini 2.0 Flash)
+- **Styling:** Custom CSS with fantasy theme
 
 ## Quick Start
 
-1. **Copy environment variables:**
-
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-2. **Install dependencies:**
+1. **Install dependencies:**
 
    ```powershell
    npm install
    ```
 
-3. **Setup database:**
+2. **Set up environment variables:**
 
    ```powershell
-   npm run prisma:generate
-   npm run prisma:migrate
+   Copy-Item .env.example .env.local
+   ```
+
+   Edit `.env.local` and add your Google Gemini API key:
+
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
+
+   Get your API key from: https://aistudio.google.com/app/apikey
+
+3. **Set up database:**
+
+   ```powershell
+   npx prisma generate
+   npx prisma migrate dev
    npm run seed
    ```
 
@@ -49,45 +60,87 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
 5. **Open browser:**  
    Navigate to `http://localhost:3000`
 
+## AI Wizard Usage
+
+Click the floating wizard button (🧙‍♂️) in the bottom-right corner to:
+
+- **Quick Actions**: Generate entities with one click based on your current tab
+
+  - Characters: Generate character concepts, expand backstories, create relationships
+  - Locations: Generate locations, add historical depth, create connected places
+  - Magic: Design magic systems, add limitations, create spells
+  - Factions: Generate factions, create leaders, add conflicts
+  - Story: Generate plot hooks, suggest next events, create dramatic conflicts
+
+- **Chat Interface**: Ask the wizard custom questions about your world
+  - The AI knows your world name, current tab, and all existing entities
+  - Get suggestions tailored to your worldbuilding context
+
+## Entity Types & Custom Fields
+
+Each entity type has specialized fields:
+
+- **Characters**: name, role, age, personality, description, backstory, strengths, weaknesses
+- **Locations**: name, type, population, climate, description, history
+- **Magic Systems**: name, category, description, rules, limitations, costs, examples
+- **Factions**: name, type, leader, description, goals, conflicts
+- **Story Events**: title, date, location, description, characters involved, outcome
+
 ## Project Structure
 
 - `pages/` — Next.js pages and API routes
+  - `index.js` — Dashboard with world list
+  - `world/[id].js` — World view with entity management
+  - `api/` — RESTful API endpoints for all entity types
 - `components/` — Reusable React components
+  - `AIWizard.js` — AI assistant with chat and quick actions
+  - `EntityList.js` — Entity cards with View/Edit/Delete
+  - `EntityModal.js` — Dynamic forms per entity type
+  - `Sidebar.js` — Navigation with world summary
 - `prisma/` — Database schema and seed data
-- `lib/` — Shared utilities (Prisma client)
-- `styles/` — Global CSS
+- `lib/` — Shared utilities
+  - `prisma.js` — Prisma client singleton
+  - `gemini.js` — Google Gemini service wrapper
+- `styles/` — Fantasy-themed global CSS
 
-## Documentation
+## Database Management
 
-📖 See [ARCHITECTURE.md](./ARCHITECTURE.md) for:
+View/edit database with Prisma Studio:
 
-- Detailed architecture overview
-- API endpoint documentation
-- Data model specifications
-- Extension guides (add entities, AI integration, PostgreSQL migration)
-- Deployment instructions
-- Stretch features roadmap
+```powershell
+npx prisma studio
+```
 
-## Usage
+For production or collaboration, migrate to PostgreSQL:
 
-1. **Dashboard** (`/`) — View and create worlds
-2. **World View** (`/world/[id]`) — Navigate tabs: Characters, Locations, Magic, Factions, Story
-3. **CRUD Actions** — Create, edit, delete entities via modal dialogs
-4. **Visualizations** — View relationship maps and location graphs
+1. Update `DATABASE_URL` in `.env.local` with your Postgres connection string
+2. Change provider in `prisma/schema.prisma` from `sqlite` to `postgresql`
+3. Run `npx prisma migrate dev`
 
-## AI Integration
+## Scripts
 
-The AI endpoint (`/api/ai/generate`) is currently a stub. To integrate a real AI provider:
+- `npm run dev` — Start development server
+- `npm run build` — Build for production
+- `npm start` — Run production server
+- `npm run seed` — Seed database with example data
+- `npx prisma studio` — Open database GUI
+- `npx prisma migrate dev` — Run database migrations
 
-1. Add your API key to `.env`:
+## API Endpoints
 
-   ```
-   AI_API_KEY=your-key-here
-   ```
+All endpoints support standard REST operations:
 
-2. Update `/pages/api/ai/generate.js` with your provider (OpenAI, Anthropic, etc.)
+- `GET /api/worlds` — List all worlds
+- `POST /api/worlds` — Create world
+- `GET /api/worlds/[id]` — Get single world
+- `PUT /api/worlds/[id]` — Update world
+- `DELETE /api/worlds/[id]` — Delete world
 
-See ARCHITECTURE.md for implementation examples.
+Same pattern for: `/api/characters`, `/api/locations`, `/api/magics`, `/api/factions`, `/api/events`
+
+AI endpoint:
+
+- `POST /api/ai/generate` — Generate content with Google Gemini
 
 ## Deployment
 
@@ -95,10 +148,10 @@ See ARCHITECTURE.md for implementation examples.
 
 1. Push to GitHub
 2. Import in Vercel
-3. Add environment variables
+3. Add `GEMINI_API_KEY` environment variable
 4. Deploy
 
-**Docker:** See ARCHITECTURE.md for Dockerfile
+For PostgreSQL in production, also add `DATABASE_URL` with your database connection string.
 
 ## License
 
