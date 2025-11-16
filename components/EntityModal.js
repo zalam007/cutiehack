@@ -39,12 +39,16 @@ export default function EntityModal({
             <input
               placeholder="Personality"
               value={data.personality || ""}
-              onChange={(e) => setData({ ...data, personality: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, personality: e.target.value })
+              }
             />
             <textarea
               placeholder="Description"
               value={data.description || ""}
-              onChange={(e) => setData({ ...data, description: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, description: e.target.value })
+              }
               style={{ gridColumn: "1 / -1", minHeight: 60 }}
             />
             <textarea
@@ -94,7 +98,9 @@ export default function EntityModal({
             <textarea
               placeholder="Description"
               value={data.description || ""}
-              onChange={(e) => setData({ ...data, description: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, description: e.target.value })
+              }
               style={{ gridColumn: "1 / -1", minHeight: 60 }}
             />
             <textarea
@@ -122,7 +128,9 @@ export default function EntityModal({
             <textarea
               placeholder="Description"
               value={data.description || ""}
-              onChange={(e) => setData({ ...data, description: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, description: e.target.value })
+              }
               style={{ gridColumn: "1 / -1", minHeight: 60 }}
             />
             <textarea
@@ -134,7 +142,9 @@ export default function EntityModal({
             <textarea
               placeholder="Limitations"
               value={data.limitations || ""}
-              onChange={(e) => setData({ ...data, limitations: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, limitations: e.target.value })
+              }
               style={{ minHeight: 50 }}
             />
             <textarea
@@ -174,7 +184,9 @@ export default function EntityModal({
             <textarea
               placeholder="Description"
               value={data.description || ""}
-              onChange={(e) => setData({ ...data, description: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, description: e.target.value })
+              }
               style={{ gridColumn: "1 / -1", minHeight: 60 }}
             />
             <textarea
@@ -214,7 +226,9 @@ export default function EntityModal({
             <textarea
               placeholder="Description"
               value={data.description || ""}
-              onChange={(e) => setData({ ...data, description: e.target.value })}
+              onChange={(e) =>
+                setData({ ...data, description: e.target.value })
+              }
               style={{ gridColumn: "1 / -1", minHeight: 60 }}
             />
             <textarea
