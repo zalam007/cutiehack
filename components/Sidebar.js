@@ -1,31 +1,37 @@
-import Link from "next/link";
+export default function Sidebar({ world, activeTab, onTabChange }) {
+  const tabs = [
+    { id: "characters", label: "Characters", icon: "⚔️" },
+    { id: "locations", label: "Locations", icon: "🏰" },
+    { id: "magics", label: "Magic", icon: "✨" },
+    { id: "factions", label: "Factions", icon: "🛡️" },
+    { id: "events", label: "Story", icon: "📜" },
+  ];
 
-export default function Sidebar({ world }) {
   return (
-    <div className="sidebar">
-      <h3 style={{ marginTop: 0 }}>{world?.name ?? "World"}</h3>
-      <p className="muted">{world?.summary}</p>
-      <div style={{ marginTop: 12 }}>
-        <nav>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            <li>
-              <Link href="#">Characters</Link>
+    <div className="sidebar card">
+      <h3 style={{ marginTop: 0, fontSize: 24, letterSpacing: "1px" }}>
+        {world?.name ?? "World"}
+      </h3>
+      {world?.summary && <div className="world-summary">{world.summary}</div>}
+      <nav style={{ marginTop: 24 }}>
+        <ul className="sidebar-nav">
+          {tabs.map((tab) => (
+            <li key={tab.id}>
+              <a
+                href="#"
+                className={activeTab === tab.id ? "active" : ""}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onTabChange(tab.id);
+                }}
+              >
+                <span style={{ marginRight: 8 }}>{tab.icon}</span>
+                {tab.label}
+              </a>
             </li>
-            <li>
-              <Link href="#">Locations</Link>
-            </li>
-            <li>
-              <Link href="#">Magic</Link>
-            </li>
-            <li>
-              <Link href="#">Factions</Link>
-            </li>
-            <li>
-              <Link href="#">Story / Timeline</Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 }
