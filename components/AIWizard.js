@@ -180,14 +180,14 @@ export default function AIWizard({
         onClick={() => setIsOpen(!isOpen)}
         title="Axel Intelligence Wizard"
       >
-        🤖
+        🧙‍♂️
       </button>
 
       {/* Wizard panel */}
       {isOpen && (
         <div className="ai-wizard-panel">
           <div className="ai-wizard-header">
-            <h3>🤖 Axel Intelligence Wizard</h3>
+            <h3>🧙‍♂️ Axel Intelligence Wizard</h3>
             <button onClick={() => setIsOpen(false)} className="close-button">
               ×
             </button>
@@ -219,7 +219,7 @@ export default function AIWizard({
           <div className="ai-chat-messages">
             {messages.length === 0 && (
               <div className="ai-welcome">
-                <p>🤖 Welcome to Axel Intelligence!</p>
+                <p>🧙‍♂️ Welcome to Axel Intelligence!</p>
                 <p>
                   I'm your AI worldbuilding assistant. I can help you create
                   characters, locations, magic systems, factions, and story
@@ -233,14 +233,14 @@ export default function AIWizard({
             {messages.map((msg, idx) => (
               <div key={idx} className={`ai-message ${msg.role}`}>
                 <div className="message-icon">
-                  {msg.role === "user" ? "👤" : "🤖"}
+                  {msg.role === "user" ? "👤" : "🧙‍♂️"}
                 </div>
                 <div className="message-content">{msg.content}</div>
               </div>
             ))}
             {isLoading && (
               <div className="ai-message assistant">
-                <div className="message-icon">🤖</div>
+                <div className="message-icon">🧙‍♂️</div>
                 <div className="message-content">
                   <div className="typing-indicator">
                     <span></span>
