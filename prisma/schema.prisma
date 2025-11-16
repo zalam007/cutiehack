@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model World {
+  id        Int        @id @default(autoincrement())
+  name      String
+  summary   String?
+  createdAt DateTime   @default(now())
+  characters Character[]
+  locations  Location[]
+  magics     Magic[]
+  factions   Faction[]
+  events     StoryEvent[]
+}
+
+model Character {
+  id          Int       @id @default(autoincrement())
+  worldId     Int
+  world       World     @relation(fields: [worldId], references: [id])
+  name        String
+  role        String?
+  description String?
+  personality String?
+  backstory   String?
+  tags        String?
+  relationships String?
+}
+
+model Location {
+  id               Int      @id @default(autoincrement())
+  worldId          Int
+  world            World    @relation(fields: [worldId], references: [id])
+  name             String
+  type             String?
+  description      String?
+  history          String?
+  connected        String?
+}
+
+model Magic {
+  id          Int     @id @default(autoincrement())
+  worldId     Int
+  world       World   @relation(fields: [worldId], references: [id])
+  title       String
+  overview    String?
+  rules       String?
+  limitations String?
+  costs       String?
+}
+
+model Faction {
+  id        Int     @id @default(autoincrement())
+  worldId   Int
+  world     World   @relation(fields: [worldId], references: [id])
+  name      String
+  purpose   String?
+  members   String?
+  conflicts String?
+}
+
+model StoryEvent {
+  id                 Int      @id @default(autoincrement())
+  worldId            Int
+  world              World    @relation(fields: [worldId], references: [id])
+  title              String
+  description        String?
+  charactersInvolved String?
+  locationId         Int?
+  timestamp          DateTime?
+}

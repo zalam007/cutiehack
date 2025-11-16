@@ -1,0 +1,28 @@
+{
+  "name": "loreforge",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "next": "13.5.7",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "swr": "^2.2.0",
+    "@prisma/client": "5.6.0",
+    "react-markdown": "^8.0.7",
+    "vis-network": "^9.1.0"
+  },
+  "devDependencies": {
+    "prisma": "5.6.0",
+    "ts-node": "10.9.1",
+    "typescript": "5.4.2"
+  }
+}
