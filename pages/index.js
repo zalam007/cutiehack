@@ -45,17 +45,17 @@ export default function Dashboard() {
           <div style={{ marginTop: 24 }}>
             {data?.length ? (
               data.map((w) => (
-                <div 
-                  key={w.id} 
+                <div
+                  key={w.id}
                   className="world-card world-card-clickable"
                   onClick={() => router.push(`/world/${w.id}`)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 >
                   <div className="world-card-content">
-                    <div className="world-card-title">
-                      🌍 {w.name}
+                    <div className="world-card-title">🌍 {w.name}</div>
+                    <div className="world-card-summary">
+                      {w.summary || "No description yet"}
                     </div>
-                    <div className="world-card-summary">{w.summary || "No description yet"}</div>
                     <div className="world-card-meta">
                       📅 Created {new Date(w.createdAt).toLocaleDateString()}
                     </div>
@@ -65,7 +65,9 @@ export default function Dashboard() {
             ) : (
               <div className="empty-state">
                 <div style={{ fontSize: 48, marginBottom: 16 }}>🌌</div>
-                <div>No worlds created yet. Start building your first world!</div>
+                <div>
+                  No worlds created yet. Start building your first world!
+                </div>
               </div>
             )}
           </div>
@@ -80,10 +82,7 @@ export default function Dashboard() {
             setFormData({ name: "", summary: "" });
           }}
         >
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Create New World</h3>
             <div style={{ display: "grid", gap: 12 }}>
               <input
@@ -111,10 +110,15 @@ export default function Dashboard() {
                 gap: 8,
               }}
             >
-              <button className="button-secondary" onClick={() => {
-                setModalOpen(false);
-                setFormData({ name: "", summary: "" });
-              }}>Cancel</button>
+              <button
+                className="button-secondary"
+                onClick={() => {
+                  setModalOpen(false);
+                  setFormData({ name: "", summary: "" });
+                }}
+              >
+                Cancel
+              </button>
               <button
                 className="button"
                 onClick={handleCreate}

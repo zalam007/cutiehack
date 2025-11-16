@@ -221,8 +221,9 @@ export default function AIWizard({
               <div className="ai-welcome">
                 <p>🤖 Welcome to Axel Intelligence!</p>
                 <p>
-                  I'm your AI worldbuilding assistant. I can help you create characters, locations, magic systems,
-                  factions, and story events.
+                  I'm your AI worldbuilding assistant. I can help you create
+                  characters, locations, magic systems, factions, and story
+                  events.
                 </p>
                 <p>
                   Try a quick action above or ask me anything about your world!

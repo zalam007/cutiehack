@@ -112,7 +112,12 @@ export default function WorldPage() {
   return (
     <Layout>
       <div className="layout">
-        <Sidebar world={world} activeTab={tab} onTabChange={setTab} onWorldUpdate={loadWorld} />
+        <Sidebar
+          world={world}
+          activeTab={tab}
+          onTabChange={setTab}
+          onWorldUpdate={loadWorld}
+        />
         <div className="main">
           <div className="card">
             <div className="page-header">
