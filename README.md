@@ -21,16 +21,19 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
 ## Quick Start
 
 1. **Copy environment variables:**
+
    ```powershell
    Copy-Item .env.example .env
    ```
 
 2. **Install dependencies:**
+
    ```powershell
    npm install
    ```
 
 3. **Setup database:**
+
    ```powershell
    npm run prisma:generate
    npm run prisma:migrate
@@ -38,6 +41,7 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
    ```
 
 4. **Start dev server:**
+
    ```powershell
    npm run dev
    ```
@@ -56,6 +60,7 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
 ## Documentation
 
 📖 See [ARCHITECTURE.md](./ARCHITECTURE.md) for:
+
 - Detailed architecture overview
 - API endpoint documentation
 - Data model specifications
@@ -75,6 +80,7 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
 The AI endpoint (`/api/ai/generate`) is currently a stub. To integrate a real AI provider:
 
 1. Add your API key to `.env`:
+
    ```
    AI_API_KEY=your-key-here
    ```
@@ -85,10 +91,11 @@ See ARCHITECTURE.md for implementation examples.
 
 ## Deployment
 
-**Vercel** (recommended):  
-1. Push to GitHub  
-2. Import in Vercel  
-3. Add environment variables  
+**Vercel** (recommended):
+
+1. Push to GitHub
+2. Import in Vercel
+3. Add environment variables
 4. Deploy
 
 **Docker:** See ARCHITECTURE.md for Dockerfile

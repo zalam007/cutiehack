@@ -7,11 +7,13 @@ A full-stack AI-powered worldbuilding application with:
 ### ✅ Complete Features Delivered
 
 1. **Multi-World Management**
+
    - Dashboard listing all worlds
    - Create, view, edit, delete worlds
    - Seed data with example world "Aurelia"
 
 2. **Entity Management (Full CRUD)**
+
    - Characters (name, role, description, personality, backstory, tags, relationships)
    - Locations (name, type, description, history, connections)
    - Magic Systems (title, overview, rules, limitations, costs)
@@ -19,6 +21,7 @@ A full-stack AI-powered worldbuilding application with:
    - Story Events (title, description, characters involved, location, timestamp)
 
 3. **UI Components**
+
    - Clean dark-themed interface
    - Dashboard with world cards
    - World view with sidebar navigation
@@ -27,10 +30,12 @@ A full-stack AI-powered worldbuilding application with:
    - Responsive entity lists with edit/delete buttons
 
 4. **Visualizations**
+
    - Character relationship graph (vis-network)
    - Location connection map (vis-network)
 
 5. **Backend API**
+
    - RESTful API routes for all entities
    - Prisma ORM with SQLite database
    - Proper CRUD endpoints (GET, POST, PUT, DELETE)
@@ -115,18 +120,21 @@ npm start                    # Start production server
 ## Next Steps (Optional Enhancements)
 
 ### Immediate Improvements
+
 1. **AI Integration** — Connect to OpenAI/Anthropic API
 2. **Character AI buttons** — Add "Expand Backstory", "Generate Personality" buttons
 3. **Search & Filter** — Add search bars to entity lists
 4. **Tags system** — Make tags clickable filters
 
 ### Medium-Term Features
+
 5. **Timeline visualization** — Use vis-timeline for story events
 6. **Export functionality** — PDF/Markdown export
 7. **Image uploads** — Character portraits, location images
 8. **Markdown editor** — Rich text editing with preview
 
 ### Advanced Features
+
 9. **Collaboration** — Real-time multi-user editing
 10. **Version control** — Git-like history for worlds
 11. **AI consistency checker** — Validate lore conflicts
@@ -137,16 +145,19 @@ npm start                    # Start production server
 ## Testing the App
 
 1. **Dashboard** (`/`)
+
    - See the "Aurelia" world from seed data
    - Click to navigate to world view
 
 2. **World View** (`/world/1`)
+
    - Switch between tabs: Characters, Locations, Magic, Factions, Story
    - Create new entities via "New" button
    - Edit/delete existing entities
    - View relationship maps under Characters and Locations tabs
 
 3. **API Testing** (Postman/curl)
+
    ```powershell
    # Get all worlds
    curl http://localhost:3000/api/worlds
@@ -163,12 +174,14 @@ npm start                    # Start production server
 ## Deployment Options
 
 ### Vercel (Easiest)
+
 1. Push to GitHub
 2. Connect repo in Vercel
 3. Add DATABASE_URL env var (use Neon/Supabase for PostgreSQL)
 4. Deploy
 
 ### Docker
+
 ```dockerfile
 FROM node:20-alpine
 WORKDIR /app
@@ -189,6 +202,7 @@ CMD ["npm", "start"]
 ## Support
 
 For questions or issues:
+
 1. Check `ARCHITECTURE.md` for technical details
 2. Review Prisma schema in `prisma/schema.prisma`
 3. Inspect API routes in `pages/api/`

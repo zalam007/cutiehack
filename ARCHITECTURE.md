@@ -3,6 +3,7 @@
 ## Architecture
 
 **Stack:**
+
 - Frontend: Next.js 13 (React)
 - Backend: Next.js API routes
 - Database: Prisma + SQLite (production: switch to PostgreSQL)
@@ -46,25 +47,31 @@ cutiehack/
 ## Data Models
 
 ### World
+
 - id, name, summary, createdAt
 - Relations: characters, locations, magics, factions, events
 
 ### Character
+
 - id, worldId, name, role, description, personality, backstory
 - tags (CSV string), relationships (CSV string of IDs)
 
 ### Location
+
 - id, worldId, name, type, description, history
 - connected (CSV string of location IDs)
 
 ### Magic
+
 - id, worldId, title, overview, rules, limitations, costs
 
 ### Faction
+
 - id, worldId, name, purpose, conflicts
 - members (CSV string of character IDs)
 
 ### StoryEvent
+
 - id, worldId, title, description, timestamp
 - charactersInvolved (CSV string of IDs), locationId
 
@@ -73,6 +80,7 @@ cutiehack/
 All endpoints follow REST conventions:
 
 **Worlds**
+
 - GET /api/worlds — List all worlds
 - POST /api/worlds — Create world
 - GET /api/worlds/[id] — Get world with relations
@@ -80,26 +88,31 @@ All endpoints follow REST conventions:
 - DELETE /api/worlds/[id] — Delete world
 
 **Characters** (same pattern)
+
 - /api/characters
 - /api/characters/[id]
 
 **Locations** (same pattern)
+
 - /api/locations
 - /api/locations/[id]
 
 **Magics, Factions, Events** follow the same pattern.
 
 **AI**
+
 - POST /api/ai/generate — { prompt, context } → { result }
 
 ## Frontend Features
 
 ### Dashboard (/)
+
 - Lists all worlds
 - Create new world button
 - Click world to navigate to world view
 
 ### World View (/world/[id])
+
 - Sidebar navigation for entity types
 - Tab-based interface (Characters, Locations, Magic, Factions, Story)
 - CRUD operations via modals
@@ -121,20 +134,24 @@ All endpoints follow REST conventions:
 Replace the stub in `pages/api/ai/generate.js`:
 
 ```js
-import axios from 'axios'
+import axios from "axios";
 
-export default async function handler(req, res){
-  const { prompt, context } = req.body
-  
+export default async function handler(req, res) {
+  const { prompt, context } = req.body;
+
   // Example: OpenAI
-  const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-    model: 'gpt-4',
-    messages: [{ role: 'user', content: prompt }]
-  }, {
-    headers: { Authorization: `Bearer ${process.env.AI_API_KEY}` }
-  })
-  
-  res.json({ result: response.data.choices[0].message.content })
+  const response = await axios.post(
+    "https://api.openai.com/v1/chat/completions",
+    {
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+    },
+    {
+      headers: { Authorization: `Bearer ${process.env.AI_API_KEY}` },
+    }
+  );
+
+  res.json({ result: response.data.choices[0].message.content });
 }
 ```
 
@@ -143,11 +160,13 @@ Then add AI buttons to EntityModal or entity detail pages.
 ### Switch to PostgreSQL
 
 1. Update `DATABASE_URL` in `.env`:
+
    ```
    DATABASE_URL="postgresql://user:password@localhost:5432/loreforge"
    ```
 
 2. Change provider in `prisma/schema.prisma`:
+
    ```prisma
    datasource db {
      provider = "postgresql"
@@ -156,6 +175,7 @@ Then add AI buttons to EntityModal or entity detail pages.
    ```
 
 3. Update array fields back to proper arrays (Postgres supports them):
+
    ```prisma
    tags String[] @default([])
    ```
@@ -177,6 +197,7 @@ Then add AI buttons to EntityModal or entity detail pages.
 ### Docker
 
 Create `Dockerfile`:
+
 ```dockerfile
 FROM node:20-alpine
 WORKDIR /app

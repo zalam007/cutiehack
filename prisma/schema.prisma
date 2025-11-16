@@ -25,9 +25,12 @@ model Character {
   world       World     @relation(fields: [worldId], references: [id])
   name        String
   role        String?
+  age         String?
   description String?
   personality String?
   backstory   String?
+  strengths   String?
+  weaknesses  String?
   tags        String?
   relationships String?
 }
@@ -40,6 +43,8 @@ model Location {
   type             String?
   description      String?
   history          String?
+  population       String?
+  climate          String?
   connected        String?
 }
 
@@ -47,21 +52,28 @@ model Magic {
   id          Int     @id @default(autoincrement())
   worldId     Int
   world       World   @relation(fields: [worldId], references: [id])
-  title       String
-  overview    String?
+  name        String
+  category    String?
+  description String?
   rules       String?
   limitations String?
   costs       String?
+  examples    String?
+
+  @@map("Magic")
 }
 
 model Faction {
-  id        Int     @id @default(autoincrement())
-  worldId   Int
-  world     World   @relation(fields: [worldId], references: [id])
-  name      String
-  purpose   String?
-  members   String?
-  conflicts String?
+  id          Int     @id @default(autoincrement())
+  worldId     Int
+  world       World   @relation(fields: [worldId], references: [id])
+  name        String
+  type        String?
+  description String?
+  leader      String?
+  members     String?
+  goals       String?
+  conflicts   String?
 }
 
 model StoryEvent {
@@ -69,8 +81,10 @@ model StoryEvent {
   worldId            Int
   world              World    @relation(fields: [worldId], references: [id])
   title              String
+  date               String?
   description        String?
+  location           String?
   charactersInvolved String?
-  locationId         Int?
+  outcome            String?
   timestamp          DateTime?
 }
