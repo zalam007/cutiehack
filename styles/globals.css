@@ -540,7 +540,29 @@ h3 {
 	font-size: 9px;
 }
 
-.ai-chat-input input {
+.ai-wizard-panel h2 {
+	font-size: 11px;
+	margin: 1rem 0 0.5rem 0;
+	color: var(--accent-primary);
+}
+
+.ai-wizard-panel ul {
+	margin: 0.5rem 0;
+	padding-left: 1.5rem;
+	list-style-type: square;
+}
+
+.ai-wizard-panel li {
+	margin: 0.25rem 0;
+	line-height: 1.6;
+}
+
+.ai-wizard-panel strong {
+	color: var(--accent-secondary);
+}
+
+.ai-chat-input input,
+.ai-chat-input textarea {
 	font-family: 'Press Start 2P', monospace;
 	font-size: 9px;
 }

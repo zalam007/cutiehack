@@ -22,6 +22,20 @@ export default function AIWizard({
     scrollToBottom();
   }, [messages]);
 
+  const formatMessage = (content) => {
+    // Simple markdown-like formatting
+    let formatted = content
+      .replace(/^## (.+)$/gm, "<h2>$1</h2>")
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/^- (.+)$/gm, "<li>$1</li>")
+      .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
+      .replace(/<\/ul>\s*<ul>/g, "")
+      .replace(/\n\n/g, "<br/><br/>")
+      .replace(/\n/g, "<br/>");
+
+    return formatted;
+  };
+
   const getQuickActions = () => {
     const actions = {
       characters: [
@@ -141,11 +155,14 @@ export default function AIWizard({
         prompt: messageText,
         context: {
           worldName: world.name,
+          worldDescription: world.description,
+          tone: world.tone,
           entityType: activeTab,
           existingEntities: entities,
           characters: allEntities.characters || [],
           locations: allEntities.locations || [],
           factions: allEntities.factions || [],
+          magicSystems: allEntities.magic || [],
         },
       });
 
@@ -197,24 +214,30 @@ export default function AIWizard({
             <strong>{world.name}</strong>
             <span className="context-separator">•</span>
             <span className="context-tab">{activeTab}</span>
-            <span className="context-separator">•</span>
-            <span className="context-count">
-              {entities.length} {activeTab}
-            </span>
+            {entities.length > 0 && (
+              <>
+                <span className="context-separator">•</span>
+                <span className="context-count">
+                  {entities.length} {activeTab}
+                </span>
+              </>
+            )}
           </div>
 
-          <div className="ai-quick-actions">
-            {getQuickActions().map((qa, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleQuickAction(qa.action)}
-                className="quick-action-button"
-                disabled={isLoading}
-              >
-                {qa.label}
-              </button>
-            ))}
-          </div>
+          {messages.length === 0 && (
+            <div className="ai-quick-actions">
+              {getQuickActions().map((qa, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleQuickAction(qa.action)}
+                  className="quick-action-button"
+                  disabled={isLoading}
+                >
+                  {qa.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="ai-chat-messages">
             {messages.length === 0 && (
@@ -235,7 +258,12 @@ export default function AIWizard({
                 <div className="message-icon">
                   {msg.role === "user" ? "👤" : "🧙‍♂️"}
                 </div>
-                <div className="message-content">{msg.content}</div>
+                <div
+                  className="message-content"
+                  dangerouslySetInnerHTML={{
+                    __html: formatMessage(msg.content),
+                  }}
+                />
               </div>
             ))}
             {isLoading && (
@@ -254,13 +282,26 @@ export default function AIWizard({
           </div>
 
           <form onSubmit={handleSubmit} className="ai-chat-input">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask the wizard anything..."
-              disabled={isLoading}
-            />
+            <div className="input-wrapper">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask the wizard anything..."
+                disabled={isLoading}
+                rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.ctrlKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+              />
+              {input.length > 0 && (
+                <span className="char-count">
+                  {input.length} / 800 characters
+                </span>
+              )}
+            </div>
             <button type="submit" disabled={isLoading || !input.trim()}>
               ➤
             </button>
@@ -357,7 +398,8 @@ export default function AIWizard({
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
+          flex-wrap: wrap;
         }
 
         .context-separator {
@@ -451,6 +493,32 @@ export default function AIWizard({
           max-width: 80%;
           white-space: pre-wrap;
           word-wrap: break-word;
+          line-height: 1.6;
+          font-size: 0.8rem;
+        }
+
+        .message-content h2 {
+          font-size: 0.85rem;
+          margin: 1rem 0 0.5rem 0;
+          color: var(--accent-primary);
+        }
+
+        .message-content h2:first-child {
+          margin-top: 0;
+        }
+
+        .message-content ul,
+        .message-content ol {
+          margin: 0.5rem 0;
+          padding-left: 1.5rem;
+        }
+
+        .message-content li {
+          margin: 0.25rem 0;
+        }
+
+        .message-content strong {
+          color: var(--accent-secondary);
         }
 
         .ai-message.user .message-content {
@@ -506,19 +574,39 @@ export default function AIWizard({
           gap: 0.5rem;
         }
 
-        .ai-chat-input input {
+        .input-wrapper {
           flex: 1;
+          position: relative;
+        }
+
+        .ai-chat-input textarea {
+          width: 100%;
           padding: 0.75rem;
+          padding-bottom: 1.5rem;
           background: var(--bg-primary);
           border: 1px solid var(--border-color);
           border-radius: 8px;
           color: var(--text-primary);
           font-size: 0.95rem;
+          font-family: inherit;
+          resize: vertical;
+          min-height: 60px;
+          max-height: 150px;
         }
 
-        .ai-chat-input input:focus {
+        .ai-chat-input textarea:focus {
           outline: none;
           border-color: var(--accent-secondary);
+        }
+
+        .char-count {
+          position: absolute;
+          bottom: 0.35rem;
+          right: 0.75rem;
+          font-size: 0.7rem;
+          color: var(--text-muted);
+          opacity: 0.7;
+          pointer-events: none;
         }
 
         .ai-chat-input button {
