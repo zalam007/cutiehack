@@ -27,10 +27,15 @@ export default function WorldPage() {
 
   useEffect(() => {
     if (!id) return;
-    axios.get(`/api/worlds/${id}`).then((r) => setWorld(r.data));
+    loadWorld();
     loadItems();
     loadAllEntities();
   }, [id, tab]);
+
+  function loadWorld() {
+    if (!id) return;
+    axios.get(`/api/worlds/${id}`).then((r) => setWorld(r.data));
+  }
 
   function loadAllEntities() {
     if (!id) return;
@@ -107,7 +112,7 @@ export default function WorldPage() {
   return (
     <Layout>
       <div className="layout">
-        <Sidebar world={world} activeTab={tab} onTabChange={setTab} />
+        <Sidebar world={world} activeTab={tab} onTabChange={setTab} onWorldUpdate={loadWorld} />
         <div className="main">
           <div className="card">
             <div className="page-header">

@@ -3,20 +3,16 @@ import Link from "next/link";
 export default function Layout({ children }) {
   return (
     <div className="container">
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 18,
-        }}
-      >
-        <h1 style={{ margin: 0 }}>LoreForge</h1>
-        <div className="flex gap">
-          <Link href="/" className="muted">
-            Dashboard
-          </Link>
-        </div>
+      <div className="app-header">
+        <Link href="/" className="logo-link">
+          <div className="logo">
+            <span className="logo-icon">⚔️</span>
+            <span className="logo-text">
+              <span className="logo-lore">Lore</span>
+              <span className="logo-forge">Forge</span>
+            </span>
+          </div>
+        </Link>
       </div>
       <div className="card">{children}</div>
     </div>

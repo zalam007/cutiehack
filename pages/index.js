@@ -42,27 +42,31 @@ export default function Dashboard() {
             </button>
           </div>
 
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: 24 }}>
             {data?.length ? (
               data.map((w) => (
-                <div
-                  key={w.id}
-                  className="entity-row"
-                  style={{ marginBottom: 8 }}
+                <div 
+                  key={w.id} 
+                  className="world-card world-card-clickable"
+                  onClick={() => router.push(`/world/${w.id}`)}
+                  style={{ cursor: 'pointer' }}
                 >
-                  <div>
-                    <Link href={`/world/${w.id}`}>
-                      <strong>{w.name}</strong>
-                    </Link>
-                    <div className="muted">{w.summary}</div>
-                  </div>
-                  <div className="muted">
-                    {new Date(w.createdAt).toLocaleDateString()}
+                  <div className="world-card-content">
+                    <div className="world-card-title">
+                      🌍 {w.name}
+                    </div>
+                    <div className="world-card-summary">{w.summary || "No description yet"}</div>
+                    <div className="world-card-meta">
+                      📅 Created {new Date(w.createdAt).toLocaleDateString()}
+                    </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="muted">No worlds yet.</div>
+              <div className="empty-state">
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🌌</div>
+                <div>No worlds created yet. Start building your first world!</div>
+              </div>
             )}
           </div>
         </div>
@@ -70,22 +74,15 @@ export default function Dashboard() {
 
       {modalOpen && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "rgba(0,0,0,0.5)",
+          className="modal-overlay"
+          onClick={() => {
+            setModalOpen(false);
+            setFormData({ name: "", summary: "" });
           }}
         >
           <div
-            style={{
-              width: 640,
-              background: "#041024",
-              padding: 18,
-              borderRadius: 8,
-            }}
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
           >
             <h3>Create New World</h3>
             <div style={{ display: "grid", gap: 12 }}>
@@ -114,13 +111,16 @@ export default function Dashboard() {
                 gap: 8,
               }}
             >
-              <button onClick={() => setModalOpen(false)}>Cancel</button>
+              <button className="button-secondary" onClick={() => {
+                setModalOpen(false);
+                setFormData({ name: "", summary: "" });
+              }}>Cancel</button>
               <button
                 className="button"
                 onClick={handleCreate}
                 disabled={!formData.name}
               >
-                Create
+                Create World
               </button>
             </div>
           </div>

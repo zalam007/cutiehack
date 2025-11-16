@@ -19,6 +19,13 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "DELETE") {
+    // Delete all related entities first
+    await prisma.character.deleteMany({ where: { worldId: id } });
+    await prisma.location.deleteMany({ where: { worldId: id } });
+    await prisma.magic.deleteMany({ where: { worldId: id } });
+    await prisma.faction.deleteMany({ where: { worldId: id } });
+    await prisma.storyEvent.deleteMany({ where: { worldId: id } });
+    // Now delete the world
     await prisma.world.delete({ where: { id } });
     res.status(204).end();
     return;
