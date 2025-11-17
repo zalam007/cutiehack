@@ -63,6 +63,7 @@ cutiehack/
 ### Models (Prisma)
 
 **World**
+
 - `id` (Int, primary key)
 - `name` (String)
 - `description` (String, optional)
@@ -70,22 +71,27 @@ cutiehack/
 - Relations: `characters[]`, `locations[]`, `magics[]`, `factions[]`, `events[]`
 
 **Character**
+
 - `id`, `worldId`, `name`, `role`, `description`, `personality`, `backstory`, `age`, `strengths`, `weaknesses`
 - `tags` (String - CSV format)
 - `relationships` (String - CSV of character IDs)
 
 **Location**
+
 - `id`, `worldId`, `name`, `type`, `description`, `history`, `population`, `climate`
 - `connected` (String - CSV of location IDs)
 
 **Magic**
+
 - `id`, `worldId`, `title`, `overview`, `rules`, `limitations`, `costs`, `category`, `examples`
 
 **Faction**
+
 - `id`, `worldId`, `name`, `purpose`, `conflicts`, `type`, `leader`
 - `members` (String - CSV of character IDs)
 
 **StoryEvent**
+
 - `id`, `worldId`, `title`, `description`, `timestamp`, `outcome`, `locationId`
 - `charactersInvolved` (String - CSV of character IDs)
 
@@ -94,6 +100,7 @@ cutiehack/
 PostgreSQL hosted on Neon (512MB free tier, serverless-compatible).
 
 Connection string format:
+
 ```
 postgresql://user:password@endpoint.neon.tech/database?sslmode=require
 ```
@@ -122,6 +129,7 @@ All endpoints follow RESTful conventions with JSON request/response bodies.
 - `DELETE /api/characters/[id]` → Delete character
 
 **Same CRUD pattern applies to:**
+
 - `/api/locations`
 - `/api/magics`
 - `/api/factions`
@@ -140,12 +148,14 @@ All endpoints follow RESTful conventions with JSON request/response bodies.
 **Implementation:** `lib/gemini.js`
 
 **Features:**
+
 - Context-aware prompts including world name, description, and existing entities
 - Structured prose output (not JSON) with markdown formatting
 - Specific generators for each entity type (characters, locations, magic, factions, events)
 - System instructions for clean, creative worldbuilding suggestions
 
 **Example Prompt Structure:**
+
 ```javascript
 const prompt = `
 You are a creative worldbuilding assistant for "${worldName}".
@@ -153,13 +163,14 @@ You are a creative worldbuilding assistant for "${worldName}".
 Current World Context:
 ${worldDescription}
 
-Existing Characters: ${characterNames.join(', ')}
+Existing Characters: ${characterNames.join(", ")}
 
 Generate 3 new character concepts...
 `;
 ```
 
 **AI Wizard Component:**
+
 - Quick action buttons (context-aware based on current tab)
 - Chat interface for custom questions
 - Character counter (multiline textarea)
@@ -171,11 +182,13 @@ Generate 3 new character concepts...
 ### Pages
 
 **Dashboard (`/`)**
+
 - Lists all worlds with create button
 - Card-based layout
 - Navigates to world detail on click
 
 **World Detail (`/world/[id]`)**
+
 - Sidebar with world summary and navigation
 - Tab-based interface (Characters, Locations, Magic, Factions, Story)
 - Entity lists with View/Edit/Delete actions
@@ -185,29 +198,34 @@ Generate 3 new character concepts...
 ### Components
 
 **EntityList.js**
+
 - Reusable component for displaying entity cards
 - Props: `entities`, `onEdit`, `onDelete`, `onView`
 - Displays different fields based on entity type
 
 **EntityModal.js**
+
 - Dynamic form generation based on entity type
 - Supports create and edit modes
 - Field validation
 - Submits to appropriate API endpoint
 
 **AIWizard.js**
+
 - Floating wizard button (bottom-right)
 - Quick actions: Generate suggestions based on current tab
 - Chat interface: Ask custom questions about world
 - Context-aware: Passes world info and existing entities to AI
 
 **Layout.js**
+
 - Global layout wrapper
 - Navigation header
 - Footer
 - Fantasy-themed styling
 
 **Sidebar.js**
+
 - World information display
 - Entity type navigation (tabs)
 - Entity counts
@@ -215,6 +233,7 @@ Generate 3 new character concepts...
 ### Styling
 
 Custom CSS with pixel-art fantasy theme:
+
 - Purple/gold gradient color scheme
 - Cinzel font for headings
 - Pixel-art borders and shadows
@@ -259,6 +278,7 @@ npm run seed                # Run seed script
 ### Vercel Deployment
 
 **Prerequisites:**
+
 - GitHub repository
 - Neon PostgreSQL database (free tier)
 - Google Gemini API key
@@ -266,11 +286,13 @@ npm run seed                # Run seed script
 **Steps:**
 
 1. **Create Neon Database**
+
    - Sign up at neon.tech (no credit card required)
    - Create new project
    - Copy connection string
 
 2. **Push to GitHub**
+
    ```powershell
    git add .
    git commit -m "Ready for deployment"
@@ -278,16 +300,19 @@ npm run seed                # Run seed script
    ```
 
 3. **Import to Vercel**
+
    - Go to vercel.com
    - Click "New Project"
    - Import GitHub repository
    - Framework preset: Next.js
 
 4. **Configure Environment Variables**
+
    - Add `DATABASE_URL` (Neon connection string)
    - Add `GEMINI_API_KEY` (from Google AI Studio)
 
 5. **Override Build Command**
+
    - Go to Settings → Build & Development
    - Build Command: `prisma generate && prisma db push && node prisma/seed.js && next build`
    - This ensures Prisma client is generated, schema is synced, and demo world is seeded
@@ -312,6 +337,7 @@ next build                   # Build Next.js application
 ### Add a New Entity Type
 
 1. **Update Database Schema** (`prisma/schema.prisma`)
+
    ```prisma
    model NewEntity {
      id       Int    @id @default(autoincrement())
@@ -322,6 +348,7 @@ next build                   # Build Next.js application
    ```
 
 2. **Add Relation to World Model**
+
    ```prisma
    model World {
      // ...existing fields
@@ -330,15 +357,18 @@ next build                   # Build Next.js application
    ```
 
 3. **Create API Routes** (`pages/api/newentities/`)
+
    - `index.js` — GET all, POST create
    - `[id].js` — GET, PUT, DELETE single
 
 4. **Add Tab to World View** (`pages/world/[id].js`)
+
    ```javascript
-   const tabs = [...existingTabs, 'newentities'];
+   const tabs = [...existingTabs, "newentities"];
    ```
 
 5. **Update EntityModal** (`components/EntityModal.js`)
+
    - Add form fields for new entity type
 
 6. **Deploy**
@@ -359,7 +389,7 @@ export async function generateCharacter(context) {
     World: ${context.worldName}
     Tone: ${context.tone}
   `;
-  
+
   return await generateContent(prompt);
 }
 ```
@@ -374,24 +404,29 @@ export async function generateCharacter(context) {
 ## Troubleshooting
 
 **Issue: Prisma client not found**
+
 - Solution: Run `npx prisma generate`
 
 **Issue: Database connection failed**
+
 - Check `DATABASE_URL` in `.env.local`
 - Verify Neon database is running
 - Ensure connection string includes `?sslmode=require`
 
 **Issue: AI not generating content**
+
 - Verify `GEMINI_API_KEY` is set
 - Check API quota at Google AI Studio
 - Review browser console for errors
 
 **Issue: Build fails on Vercel**
+
 - Ensure Build Command is overridden in Vercel settings
 - Check environment variables are set
 - Review build logs for Prisma errors
 
 **Issue: Demo world not appearing**
+
 - Seed script runs on deployment
 - Check Vercel deployment logs for seed errors
 - Verify `node prisma/seed.js` is in build command
@@ -399,16 +434,19 @@ export async function generateCharacter(context) {
 ## Performance Considerations
 
 **Serverless Functions:**
+
 - Each API route is a separate serverless function
 - Cold starts: ~500ms-1s
 - Prisma client singleton reduces connection overhead
 
 **Database Connections:**
+
 - Neon uses connection pooling automatically
 - Prisma manages connection lifecycle
 - No persistent connections in serverless environment
 
 **Client-side Caching:**
+
 - SWR caches entity lists
 - Revalidation on focus/reconnect
 - Optimistic updates for better UX
@@ -422,6 +460,7 @@ export async function generateCharacter(context) {
 - CORS handled by Next.js defaults
 
 **Recommended Additions:**
+
 - Authentication (NextAuth.js)
 - Rate limiting on AI endpoints
 - Input sanitization
