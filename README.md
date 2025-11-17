@@ -17,8 +17,9 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
 
 - **Frontend:** Next.js 13 (React)
 - **Backend:** Next.js API routes (Node.js)
-- **Database:** Prisma ORM + SQLite (switchable to PostgreSQL)
-- **AI:** Google Generative AI (Gemini 2.0 Flash)
+- **Database:** PostgreSQL (Neon) + Prisma ORM
+- **AI:** Google Generative AI (Gemini 2.5 Flash)
+- **Deployment:** Vercel (serverless)
 - **Styling:** Custom CSS with fantasy theme
 
 ## Quick Start
@@ -35,13 +36,15 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
    Copy-Item .env.example .env.local
    ```
 
-   Edit `.env.local` and add your Google Gemini API key:
+   Edit `.env.local` and add:
 
    ```
    GEMINI_API_KEY=your_api_key_here
+   DATABASE_URL=your_postgresql_connection_string
    ```
 
-   Get your API key from: https://aistudio.google.com/app/apikey
+   - Get Gemini API key from: https://aistudio.google.com/app/apikey
+   - For local development, use a PostgreSQL database URL (Neon, Supabase, or local Postgres)
 
 3. **Set up database:**
 
@@ -111,11 +114,12 @@ View/edit database with Prisma Studio:
 npx prisma studio
 ```
 
-For production or collaboration, migrate to PostgreSQL:
+The project uses PostgreSQL via Neon (cloud-hosted). For local development:
 
-1. Update `DATABASE_URL` in `.env.local` with your Postgres connection string
-2. Change provider in `prisma/schema.prisma` from `sqlite` to `postgresql`
-3. Run `npx prisma migrate dev`
+1. Set up a PostgreSQL database (Neon free tier recommended)
+2. Update `DATABASE_URL` in `.env.local` with your connection string
+3. Run `npx prisma db push` to sync schema
+4. Run `npm run seed` to populate demo data
 
 ## Scripts
 
@@ -144,14 +148,19 @@ AI endpoint:
 
 ## Deployment
 
-**Vercel** (recommended):
+**Live Demo:** [lore-forge-weld.vercel.app](https://lore-forge-weld.vercel.app)
+
+**Deploy Your Own:**
 
 1. Push to GitHub
-2. Import in Vercel
-3. Add `GEMINI_API_KEY` environment variable
-4. Deploy
+2. Import project in Vercel
+3. Add environment variables:
+   - `GEMINI_API_KEY` (from Google AI Studio)
+   - `DATABASE_URL` (PostgreSQL connection string from Neon/Supabase)
+4. Override Build Command to: `prisma generate && prisma db push && node prisma/seed.js && next build`
+5. Deploy
 
-For PostgreSQL in production, also add `DATABASE_URL` with your database connection string.
+The build command ensures Prisma client is generated, database schema is synced, and demo world is seeded automatically.
 
 ## License
 
