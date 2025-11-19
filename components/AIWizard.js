@@ -22,20 +22,6 @@ export default function AIWizard({
     scrollToBottom();
   }, [messages]);
 
-  const formatMessage = (content) => {
-    // Simple markdown-like formatting
-    let formatted = content
-      .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/^- (.+)$/gm, "<li>$1</li>")
-      .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
-      .replace(/<\/ul>\s*<ul>/g, "")
-      .replace(/\n\n/g, "<br/><br/>")
-      .replace(/\n/g, "<br/>");
-
-    return formatted;
-  };
-
   const getQuickActions = () => {
     const actions = {
       characters: [
@@ -258,12 +244,14 @@ export default function AIWizard({
                 <div className="message-icon">
                   {msg.role === "user" ? "👤" : "🧙‍♂️"}
                 </div>
-                <div
-                  className="message-content"
-                  dangerouslySetInnerHTML={{
-                    __html: formatMessage(msg.content),
-                  }}
-                />
+                <div className="message-content">
+                  {msg.content.split('\n').map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      {i < msg.content.split('\n').length - 1 && <br />}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
             {isLoading && (

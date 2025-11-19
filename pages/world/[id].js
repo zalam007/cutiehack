@@ -35,11 +35,23 @@ export default function WorldPage() {
 
   function loadWorld() {
     if (!id) return;
-    axios.get(`/api/worlds/${id}`).then((r) => setWorld(r.data));
+    // Validate that id is a number to prevent SSRF attacks
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId) || numericId <= 0) {
+      console.error("Invalid world ID");
+      return;
+    }
+    axios.get(`/api/worlds/${numericId}`).then((r) => setWorld(r.data));
   }
 
   function loadAllEntities() {
     if (!id) return;
+    // Validate that id is a number to prevent SSRF attacks
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId) || numericId <= 0) {
+      console.error("Invalid world ID");
+      return;
+    }
     const entityTypes = [
       "characters",
       "locations",
@@ -50,7 +62,7 @@ export default function WorldPage() {
     Promise.all(
       entityTypes.map((type) =>
         axios
-          .get(`/api/${type}?worldId=${id}`)
+          .get(`/api/${type}?worldId=${numericId}`)
           .then((r) => ({ type, data: r.data }))
       )
     ).then((results) => {
@@ -64,7 +76,13 @@ export default function WorldPage() {
 
   function loadItems() {
     if (!id) return;
-    axios.get(`/api/${tab}?worldId=${id}`).then((r) => setItems(r.data));
+    // Validate that id is a number to prevent SSRF attacks
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId) || numericId <= 0) {
+      console.error("Invalid world ID");
+      return;
+    }
+    axios.get(`/api/${tab}?worldId=${numericId}`).then((r) => setItems(r.data));
   }
 
   function handleCreate() {
