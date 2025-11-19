@@ -98,10 +98,7 @@ export default function Dashboard() {
       </div>
 
       {modalOpen && (
-        <div
-          className="modal-overlay"
-          onClick={handleCloseModal}
-        >
+        <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Create New World</h3>
             <div style={{ display: "grid", gap: 12 }}>

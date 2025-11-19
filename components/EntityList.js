@@ -64,13 +64,22 @@ export default function EntityList({ items = [], onEdit, onDelete, onView }) {
             )}
 
             <div className="entity-actions">
-              <button className="button-secondary" onClick={() => handleView(it)}>
+              <button
+                className="button-secondary"
+                onClick={() => handleView(it)}
+              >
                 View
               </button>
-              <button className="button-secondary" onClick={() => handleEdit(it)}>
+              <button
+                className="button-secondary"
+                onClick={() => handleEdit(it)}
+              >
                 Edit
               </button>
-              <button className="button-danger" onClick={() => handleDelete(it)}>
+              <button
+                className="button-danger"
+                onClick={() => handleDelete(it)}
+              >
                 Delete
               </button>
             </div>
