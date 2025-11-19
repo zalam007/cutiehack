@@ -4,7 +4,7 @@
 
 ## Architecture Overview
 
-LoreForge is a full-stack serverless web application built with Next.js, deployed on Vercel with a cloud-hosted PostgreSQL database.
+LoreForge is a full-stack serverless web application built with Next.js, deployed on Vercel with a cloud-hosted PostgreSQL database. Features anonymous user isolation via persistent cookies.
 
 **Tech Stack:**
 
@@ -14,6 +14,14 @@ LoreForge is a full-stack serverless web application built with Next.js, deploye
 - **AI:** Google Gemini 2.5 Flash API via @google/generative-ai
 - **Deployment:** Vercel (serverless hosting with automatic GitHub CI/CD)
 - **Data Fetching:** SWR + Axios
+- **Session Management:** Cookie-based anonymous user identification
+
+**Key Features:**
+
+- **User Isolation:** Each visitor gets a unique anonymous ID stored in persistent cookies (1 year expiration)
+- **Resource Limits:** 4 worlds per user, 10 entities per type per world
+- **Automatic Cleanup:** Users inactive for 7+ days are automatically deleted
+- **Demo World:** Each new user automatically receives "Mythworld (Demo)" with sample content
 
 ## Project Structure
 
@@ -62,38 +70,59 @@ cutiehack/
 
 ### Models (Prisma)
 
+**User**
+
+- `id` (String UUID, primary key)
+- `createdAt` (DateTime)
+- `lastVisited` (DateTime, updated on each request)
+- Relations: `worlds[]`
+
 **World**
 
 - `id` (Int, primary key)
+- `userId` (String, foreign key to User)
+- `user` (User relation)
 - `name` (String)
 - `description` (String, optional)
 - `createdAt` (DateTime)
 - Relations: `characters[]`, `locations[]`, `magics[]`, `factions[]`, `events[]`
+- **Cascade delete:** When User is deleted, all worlds are deleted
+- **Limit:** Max 4 worlds per user
 
 **Character**
 
 - `id`, `worldId`, `name`, `role`, `description`, `personality`, `backstory`, `age`, `strengths`, `weaknesses`
 - `tags` (String - CSV format)
 - `relationships` (String - CSV of character IDs)
+- **Cascade delete:** Deleted when World is deleted
+- **Limit:** Max 10 characters per world
 
 **Location**
 
 - `id`, `worldId`, `name`, `type`, `description`, `history`, `population`, `climate`
 - `connected` (String - CSV of location IDs)
+- **Cascade delete:** Deleted when World is deleted
+- **Limit:** Max 10 locations per world
 
 **Magic**
 
 - `id`, `worldId`, `title`, `overview`, `rules`, `limitations`, `costs`, `category`, `examples`
+- **Cascade delete:** Deleted when World is deleted
+- **Limit:** Max 10 magic systems per world
 
 **Faction**
 
 - `id`, `worldId`, `name`, `purpose`, `conflicts`, `type`, `leader`
 - `members` (String - CSV of character IDs)
+- **Cascade delete:** Deleted when World is deleted
+- **Limit:** Max 10 factions per world
 
 **StoryEvent**
 
 - `id`, `worldId`, `title`, `description`, `timestamp`, `outcome`, `locationId`
 - `charactersInvolved` (String - CSV of character IDs)
+- **Cascade delete:** Deleted when World is deleted
+- **Limit:** Max 10 story events per world
 
 ### Database Provider
 
@@ -111,37 +140,104 @@ All endpoints follow RESTful conventions with JSON request/response bodies.
 
 ### Worlds
 
-- `GET /api/worlds` → List all worlds
+- `GET /api/worlds` → List all worlds for current user
 - `POST /api/worlds` → Create new world
   - Body: `{ name, description? }`
+  - **Limit check:** Returns 403 if user already has 4 worlds
+  - **Session:** Automatically associates world with current user
 - `GET /api/worlds/[id]` → Get world with all related entities
+  - **Ownership check:** Returns 403 if world doesn't belong to user
 - `PUT /api/worlds/[id]` → Update world
   - Body: `{ name?, description? }`
+  - **Ownership check:** Verified before update
 - `DELETE /api/worlds/[id]` → Delete world (cascades to all entities)
+  - **Ownership check:** Verified before deletion
 
 ### Characters
 
 - `GET /api/characters?worldId={id}` → List characters for world
+  - **Ownership check:** Verifies user owns the world
+  - Returns 403 if access denied, 400 if worldId missing
 - `POST /api/characters` → Create character
   - Body: `{ worldId, name, role, description?, personality?, backstory?, age?, strengths?, weaknesses?, tags?, relationships? }`
+  - **Ownership check:** Verifies user owns the world
+  - **Limit check:** Returns 403 if world already has 10 characters
 - `GET /api/characters/[id]` → Get single character
+  - **Ownership check:** Verifies via world relationship
 - `PUT /api/characters/[id]` → Update character
+  - **Ownership check:** Verified before update
 - `DELETE /api/characters/[id]` → Delete character
+  - **Ownership check:** Verified before deletion
 
 **Same CRUD pattern applies to:**
 
-- `/api/locations`
-- `/api/magics`
-- `/api/factions`
-- `/api/events`
+- `/api/locations` (max 10 per world)
+- `/api/magics` (max 10 per world)
+- `/api/factions` (max 10 per world)
+- `/api/events` (max 10 per world)
+
+All entity endpoints include ownership verification and entity count limits.
 
 ### AI Generation
 
 - `POST /api/ai/generate`
-  - Body: `{ prompt, worldName?, worldDescription?, entityType?, entities? }`
+  - Body: `{ prompt, worldName?, worldDescription?, entityType?, entities?, context? }`
+  - **Ownership check:** Verifies user owns world if `context.worldId` is provided
   - Response: `{ suggestion }` (formatted prose with markdown-style headings/bullets)
 
+### Admin Endpoints
+
+- `POST /api/admin/cleanup`
+  - Triggers cleanup of users inactive for 7+ days
+  - Response: `{ success, message, deletedCount }`
+  - **Note:** Should be secured with API key in production (currently open)
+
 ## AI Integration
+
+### Session Management & User Isolation
+
+**Implementation:** `lib/session.js`
+
+**How it works:**
+
+1. On first visit, server generates a random UUID for the user
+2. UUID is stored in an httpOnly cookie (`loreforge_user_id`) with 1-year expiration
+3. User record is created in database with `createdAt` and `lastVisited` timestamps
+4. Demo world "Mythworld" is automatically seeded for the new user
+5. On subsequent visits, cookie is read and `lastVisited` is updated
+
+**Cookie Configuration:**
+
+- **Name:** `loreforge_user_id`
+- **Duration:** 1 year (365 days)
+- **Flags:** httpOnly (prevents JavaScript access), secure (HTTPS only in production), sameSite=lax
+- **Persistence:** Survives browser restarts (not session-only)
+
+**Security Features:**
+
+- Users can only access their own worlds and entities
+- All API endpoints verify ownership before returning data
+- Cookie is httpOnly to prevent XSS attacks
+- UUID is randomly generated (not guessable)
+
+**Cleanup System:**
+
+- `cleanupInactiveUsers()` function in `lib/session.js`
+- Deletes users who haven't visited in 7+ days
+- Cascading deletes remove all associated worlds and entities
+- Can be triggered via `/api/admin/cleanup` endpoint
+- **Recommendation:** Set up a cron job (Vercel Cron, GitHub Actions) to run daily
+
+**Helper Functions:**
+
+- `getOrCreateUser(req, res)` - Gets or creates user from cookie
+- `seedDemoWorld(userId)` - Creates demo world with sample entities
+- `cleanupInactiveUsers()` - Deletes inactive users (7+ days)
+
+**Authorization Helpers:** `lib/auth.js`
+
+- `verifyWorldOwnership(userId, worldId)` - Checks if user owns a world
+- `checkEntityLimit(entityType, worldId)` - Checks if under 10 entity limit
 
 ### Google Gemini 2.5 Flash
 

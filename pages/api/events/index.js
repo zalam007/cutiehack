@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     const { worldId } = req.query;
-    
+
     if (!worldId) {
       res.status(400).json({ error: "worldId required" });
       return;
@@ -35,9 +35,13 @@ export default async function handler(req, res) {
       return;
     }
 
-    const underLimit = await checkEntityLimit('storyEvent', data.worldId);
+    const underLimit = await checkEntityLimit("storyEvent", data.worldId);
     if (!underLimit) {
-      res.status(403).json({ error: "Maximum 10 events per world. Delete one to create a new one." });
+      res
+        .status(403)
+        .json({
+          error: "Maximum 10 events per world. Delete one to create a new one.",
+        });
       return;
     }
 

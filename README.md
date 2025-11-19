@@ -4,14 +4,17 @@ An AI-powered worldbuilding and lore-management tool for creating and managing f
 
 ## Features
 
-✅ **Multi-world management** — Create and organize multiple fictional universes  
-✅ **Rich entity types** — Characters, Locations, Magic Systems, Factions, Story Events  
+✅ **Multi-world management** — Create and organize multiple fictional universes (max 4 worlds per user)  
+✅ **Rich entity types** — Characters, Locations, Magic Systems, Factions, Story Events (max 10 per type per world)  
+✅ **User isolation** — Anonymous session-based isolation with persistent cookies (each user sees only their own worlds)  
 ✅ **Custom fields per entity** — Specialized fields for each type (age/strengths for characters, climate/population for locations, etc.)  
 ✅ **AI Wizard** — Google Gemini-powered assistant with context-aware suggestions  
 ✅ **Quick AI Actions** — Generate characters, locations, magic systems, factions, and story events with one click  
 ✅ **Chat Interface** — Ask the AI wizard custom questions about your world  
 ✅ **CRUD operations** — Full create, read, update, delete for all entities  
-✅ **Fantasy-themed UI** — Mystical dark theme with purple/gold gradients and Cinzel typography
+✅ **Fantasy-themed UI** — Mystical dark theme with purple/gold gradients and Cinzel typography  
+✅ **Demo world** — New users automatically get "Mythworld (Demo)" with sample content  
+✅ **Automatic cleanup** — Inactive users (7+ days) are automatically removed to save database space
 
 ## Tech Stack
 

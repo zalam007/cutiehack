@@ -6,6 +6,7 @@ import EntityList from "../../components/EntityList";
 import EntityModal from "../../components/EntityModal";
 import AIWizard from "../../components/AIWizard";
 import axios from "axios";
+import sounds from "../../lib/sounds";
 
 export default function WorldPage() {
   const router = useRouter();
@@ -67,6 +68,7 @@ export default function WorldPage() {
   }
 
   function handleCreate() {
+    sounds.open();
     setEditing({});
     setModalOpen(true);
   }

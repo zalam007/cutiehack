@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
+import sounds from "../lib/sounds";
 
 export default function Sidebar({
   world,
@@ -30,6 +31,7 @@ export default function Sidebar({
       });
       setIsEditingName(false);
       onWorldUpdate();
+      sounds.create();
     }
   }
 
@@ -37,6 +39,7 @@ export default function Sidebar({
     await axios.put(`/api/worlds/${world.id}`, { name: world.name, summary });
     setIsEditingSummary(false);
     onWorldUpdate();
+    sounds.create();
   }
 
   async function handleDelete() {
@@ -46,13 +49,20 @@ export default function Sidebar({
       )
     ) {
       try {
+        sounds.delete();
         await axios.delete(`/api/worlds/${world.id}`);
         router.push("/");
       } catch (error) {
+        sounds.error();
         alert("Failed to delete world: " + error.message);
       }
     }
   }
+
+  const handleTabChange = (tabId) => {
+    sounds.tab();
+    onTabChange(tabId);
+  };
 
   return (
     <div className="sidebar card">
@@ -150,7 +160,7 @@ export default function Sidebar({
                 className={activeTab === tab.id ? "active" : ""}
                 onClick={(e) => {
                   e.preventDefault();
-                  onTabChange(tab.id);
+                  handleTabChange(tab.id);
                 }}
               >
                 <span style={{ marginRight: 8 }}>{tab.icon}</span>

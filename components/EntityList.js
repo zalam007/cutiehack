@@ -1,4 +1,21 @@
+import sounds from "../lib/sounds";
+
 export default function EntityList({ items = [], onEdit, onDelete, onView }) {
+  const handleView = (item) => {
+    sounds.click();
+    onView?.(item);
+  };
+
+  const handleEdit = (item) => {
+    sounds.open();
+    onEdit?.(item);
+  };
+
+  const handleDelete = (item) => {
+    sounds.delete();
+    onDelete?.(item);
+  };
+
   if (!items.length) {
     return (
       <div className="empty-state">
@@ -47,13 +64,13 @@ export default function EntityList({ items = [], onEdit, onDelete, onView }) {
             )}
 
             <div className="entity-actions">
-              <button className="button-secondary" onClick={() => onView?.(it)}>
+              <button className="button-secondary" onClick={() => handleView(it)}>
                 View
               </button>
-              <button className="button-secondary" onClick={() => onEdit?.(it)}>
+              <button className="button-secondary" onClick={() => handleEdit(it)}>
                 Edit
               </button>
-              <button className="button-danger" onClick={() => onDelete?.(it)}>
+              <button className="button-danger" onClick={() => handleDelete(it)}>
                 Delete
               </button>
             </div>

@@ -1,10 +1,15 @@
 import Link from "next/link";
+import sounds from "../lib/sounds";
 
 export default function Layout({ children }) {
+  const handleLogoClick = () => {
+    sounds.logoClick();
+  };
+
   return (
     <div className="container">
       <div className="app-header">
-        <Link href="/" className="logo-link">
+        <Link href="/" className="logo-link" onClick={handleLogoClick}>
           <div className="logo">
             <span className="logo-icon">⚔️</span>
             <span className="logo-text">

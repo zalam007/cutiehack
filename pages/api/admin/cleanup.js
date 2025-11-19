@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
   try {
     const deletedCount = await cleanupInactiveUsers();
-    
+
     res.json({
       success: true,
       message: `Cleaned up ${deletedCount} inactive user(s) (inactive for 7+ days)`,

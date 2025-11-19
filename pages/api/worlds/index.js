@@ -21,13 +21,18 @@ export default async function handler(req, res) {
     });
 
     if (worldCount >= 4) {
-      res.status(403).json({ error: "Maximum 4 worlds allowed. Delete a world to create a new one." });
+      res
+        .status(403)
+        .json({
+          error:
+            "Maximum 4 worlds allowed. Delete a world to create a new one.",
+        });
       return;
     }
 
     const { name, summary } = req.body;
-    const w = await prisma.world.create({ 
-      data: { name, summary, userId } 
+    const w = await prisma.world.create({
+      data: { name, summary, userId },
     });
     res.status(201).json(w);
     return;

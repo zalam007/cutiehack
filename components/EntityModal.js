@@ -1,4 +1,5 @@
 import { useState } from "react";
+import sounds from "../lib/sounds";
 
 export default function EntityModal({
   open = false,
@@ -15,6 +16,16 @@ export default function EntityModal({
   }
 
   if (!open) return null;
+
+  const handleClose = () => {
+    sounds.close();
+    onClose();
+  };
+
+  const handleSave = () => {
+    sounds.create();
+    onSave?.(data);
+  };
 
   const renderFields = () => {
     switch (entityType) {
@@ -289,8 +300,8 @@ export default function EntityModal({
             gap: 8,
           }}
         >
-          <button onClick={onClose}>Cancel</button>
-          <button className="button" onClick={() => onSave?.(data)}>
+          <button onClick={handleClose}>Cancel</button>
+          <button className="button" onClick={handleSave}>
             Save
           </button>
         </div>

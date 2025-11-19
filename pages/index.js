@@ -4,6 +4,7 @@ import useSWR from "swr";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import sounds from "../lib/sounds";
 
 const fetcher = (url) => axios.get(url).then((r) => r.data);
 
@@ -14,12 +15,34 @@ export default function Dashboard() {
   const router = useRouter();
 
   async function handleCreate() {
-    const result = await axios.post("/api/worlds", formData);
+    try {
+      sounds.create();
+      const result = await axios.post("/api/worlds", formData);
+      setModalOpen(false);
+      setFormData({ name: "", summary: "" });
+      mutate();
+      router.push(`/world/${result.data.id}`);
+    } catch (error) {
+      sounds.error();
+      alert(error.response?.data?.error || "Failed to create world");
+    }
+  }
+
+  const handleWorldClick = (worldId) => {
+    sounds.click();
+    router.push(`/world/${worldId}`);
+  };
+
+  const handleOpenModal = () => {
+    sounds.open();
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    sounds.close();
     setModalOpen(false);
     setFormData({ name: "", summary: "" });
-    mutate();
-    router.push(`/world/${result.data.id}`);
-  }
+  };
 
   return (
     <Layout>
@@ -37,7 +60,7 @@ export default function Dashboard() {
             }}
           >
             <h2>Your Worlds</h2>
-            <button className="button" onClick={() => setModalOpen(true)}>
+            <button className="button" onClick={handleOpenModal}>
               Create World
             </button>
           </div>
@@ -48,7 +71,7 @@ export default function Dashboard() {
                 <div
                   key={w.id}
                   className="world-card world-card-clickable"
-                  onClick={() => router.push(`/world/${w.id}`)}
+                  onClick={() => handleWorldClick(w.id)}
                   style={{ cursor: "pointer" }}
                 >
                   <div className="world-card-content">
@@ -77,10 +100,7 @@ export default function Dashboard() {
       {modalOpen && (
         <div
           className="modal-overlay"
-          onClick={() => {
-            setModalOpen(false);
-            setFormData({ name: "", summary: "" });
-          }}
+          onClick={handleCloseModal}
         >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Create New World</h3>
