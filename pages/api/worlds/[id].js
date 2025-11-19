@@ -1,7 +1,26 @@
 import prisma from "../../../lib/prisma";
+import { getOrCreateUser } from "../../../lib/session";
 
 export default async function handler(req, res) {
+  const userId = await getOrCreateUser(req, res);
   const id = Number(req.query.id);
+
+  // Verify world ownership
+  const world = await prisma.world.findUnique({
+    where: { id },
+    select: { userId: true },
+  });
+
+  if (!world) {
+    res.status(404).json({ error: "World not found" });
+    return;
+  }
+
+  if (world.userId !== userId) {
+    res.status(403).json({ error: "Access denied" });
+    return;
+  }
+
   if (req.method === "GET") {
     const w = await prisma.world.findUnique({
       where: { id },
@@ -19,13 +38,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "DELETE") {
-    // Delete all related entities first
-    await prisma.character.deleteMany({ where: { worldId: id } });
-    await prisma.location.deleteMany({ where: { worldId: id } });
-    await prisma.magic.deleteMany({ where: { worldId: id } });
-    await prisma.faction.deleteMany({ where: { worldId: id } });
-    await prisma.storyEvent.deleteMany({ where: { worldId: id } });
-    // Now delete the world
+    // Cascading deletes are handled by database schema
     await prisma.world.delete({ where: { id } });
     res.status(204).end();
     return;

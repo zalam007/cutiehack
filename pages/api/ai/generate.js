@@ -8,13 +8,24 @@ import {
   expandBackstory,
   generateRelationships,
 } from "../../../lib/gemini";
+import { getOrCreateUser } from "../../../lib/session";
+import { verifyWorldOwnership } from "../../../lib/auth";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const userId = await getOrCreateUser(req, res);
   const { action, prompt, context } = req.body;
+
+  // Verify world ownership if worldId is provided
+  if (context?.worldId) {
+    const isOwner = await verifyWorldOwnership(userId, context.worldId);
+    if (!isOwner) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+  }
 
   try {
     let result;

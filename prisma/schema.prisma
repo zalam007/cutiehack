@@ -7,8 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  lastVisited DateTime @default(now())
+  worlds      World[]
+}
+
 model World {
   id        Int        @id @default(autoincrement())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   name      String
   summary   String?
   createdAt DateTime   @default(now())
@@ -22,7 +31,7 @@ model World {
 model Character {
   id          Int       @id @default(autoincrement())
   worldId     Int
-  world       World     @relation(fields: [worldId], references: [id])
+  world       World     @relation(fields: [worldId], references: [id], onDelete: Cascade)
   name        String
   role        String?
   age         String?
@@ -38,7 +47,7 @@ model Character {
 model Location {
   id               Int      @id @default(autoincrement())
   worldId          Int
-  world            World    @relation(fields: [worldId], references: [id])
+  world            World    @relation(fields: [worldId], references: [id], onDelete: Cascade)
   name             String
   type             String?
   description      String?
@@ -51,7 +60,7 @@ model Location {
 model Magic {
   id          Int     @id @default(autoincrement())
   worldId     Int
-  world       World   @relation(fields: [worldId], references: [id])
+  world       World   @relation(fields: [worldId], references: [id], onDelete: Cascade)
   name        String
   category    String?
   description String?
@@ -66,7 +75,7 @@ model Magic {
 model Faction {
   id          Int     @id @default(autoincrement())
   worldId     Int
-  world       World   @relation(fields: [worldId], references: [id])
+  world       World   @relation(fields: [worldId], references: [id], onDelete: Cascade)
   name        String
   type        String?
   description String?
@@ -79,7 +88,7 @@ model Faction {
 model StoryEvent {
   id                 Int      @id @default(autoincrement())
   worldId            Int
-  world              World    @relation(fields: [worldId], references: [id])
+  world              World    @relation(fields: [worldId], references: [id], onDelete: Cascade)
   title              String
   date               String?
   description        String?

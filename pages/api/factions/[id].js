@@ -1,10 +1,27 @@
 import prisma from "../../../lib/prisma";
+import { getOrCreateUser } from "../../../lib/session";
 
 export default async function handler(req, res) {
+  const userId = await getOrCreateUser(req, res);
   const id = Number(req.query.id);
+
+  const entity = await prisma.faction.findUnique({
+    where: { id },
+    include: { world: { select: { userId: true } } },
+  });
+
+  if (!entity) {
+    res.status(404).json({ error: "Faction not found" });
+    return;
+  }
+
+  if (entity.world.userId !== userId) {
+    res.status(403).json({ error: "Access denied" });
+    return;
+  }
+
   if (req.method === "GET") {
-    const item = await prisma.faction.findUnique({ where: { id } });
-    res.json(item);
+    res.json(entity);
     return;
   }
 
